@@ -1,0 +1,199 @@
+/* RugGuard Content Script CSS */
+:root {
+  --rugguard-primary: #32a852;
+  --rugguard-secondary: #8732a8;
+  --rugguard-background: #14141e;
+  --rugguard-text: #e0e0e0;
+  --rugguard-danger: #e74c3c;
+  --rugguard-warning: #f39c12;
+  --rugguard-success: #2ecc71;
+}
+
+.rugguard-risk-container {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: var(--rugguard-background);
+  color: var(--rugguard-text);
+  border: 2px solid var(--rugguard-primary);
+  font-family: 'Courier New', monospace;
+  image-rendering: pixelated;
+}
+
+.rugguard-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.rugguard-logo {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, var(--rugguard-primary) 0%, var(--rugguard-secondary) 100%);
+  margin-right: 10px;
+  position: relative;
+}
+
+.rugguard-logo::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--rugguard-background);
+  clip-path: polygon(25% 25%, 75% 25%, 75% 75%, 25% 75%);
+}
+
+.rugguard-header h3 {
+  margin: 0;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rugguard-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: rgba(255,255,255,0.05);
+}
+
+.rugguard-score.low-risk .score-value {
+  color: var(--rugguard-success);
+}
+
+.rugguard-score.medium-risk .score-value {
+  color: var(--rugguard-warning);
+}
+
+.rugguard-score.high-risk .score-value {
+  color: var(--rugguard-danger);
+}
+
+.score-label {
+  font-size: 14px;
+}
+
+.score-value {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.rugguard-factors {
+  margin: 15px 0;
+}
+
+.rugguard-factors h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+
+.rugguard-factors ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rugguard-factors li {
+  padding: 8px;
+  margin: 5px 0;
+  background-color: rgba(255,255,255,0.05);
+  border-left: 4px solid;
+  font-size: 13px;
+}
+
+.rugguard-factors li.low {
+  border-color: var(--rugguard-success);
+}
+
+.rugguard-factors li.medium {
+  border-color: var(--rugguard-warning);
+}
+
+.rugguard-factors li.high {
+  border-color: var(--rugguard-danger);
+}
+
+.rugguard-footer {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.rugguard-footer a {
+  color: var(--rugguard-primary);
+  text-decoration: none;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.rugguard-footer a:hover {
+  text-decoration: underline;
+}
+
+.premium-badge {
+  background-color: var(--rugguard-secondary);
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+.free-badge {
+  background-color: var(--rugguard-background);
+  color: #888;
+  font-size: 10px;
+  padding: 2px 6px;
+  text-transform: uppercase;
+  margin-left: 8px;
+  border: 1px solid #444;
+}
+
+.subscription-note {
+  margin: 12px 0;
+  padding: 10px;
+  background-color: rgba(255,255,255,0.05);
+  border-left: 4px solid var(--rugguard-secondary);
+  font-size: 12px;
+}
+
+.upgrade-button {
+  display: inline-block;
+  background-color: var(--rugguard-secondary);
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 4px 8px;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+.upgrade-button:hover {
+  background-color: #732b8e;
+  text-decoration: none;
+}
+
+/* Trial period notice */
+.trial-notice {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 8px;
+}
+
+/* Dark mode adaptations for different explorers */
+body.dark-mode .rugguard-risk-container,
+.dark-theme .rugguard-risk-container,
+[data-theme="dark"] .rugguard-risk-container {
+  background-color: var(--rugguard-background);
+  border-color: var(--rugguard-primary);
+}
+
+/* Light mode adaptations */
+body:not(.dark-mode) .rugguard-risk-container,
+:not(.dark-theme) .rugguard-risk-container,
+:not([data-theme="dark"]) .rugguard-risk-container {
+  background-color: rgba(20, 20, 30, 0.9);
+  color: var(--rugguard-text);
+}

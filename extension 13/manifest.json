@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "RugGuard",
+  "version": "1.88.13",
+  "description": "Detect high-risk Solana tokens and protect yourself from scams. Powered by Rugcheck.xyz. DISCLAIMER: Relevant Cryptocurrency/Web3 based ads are in this extension.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "alarms",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "48": "images/icon-48.png",
+      "128": "images/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon-16.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

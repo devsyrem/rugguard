@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RugGuard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #090909;
+      --foreground: #fafafa;
+      --muted: #262626;
+      --muted-foreground: #a3a3a3;
+      --border: #262626;
+      --input: #262626;
+      --primary: #FF6B4A;
+      --primary-foreground: #fafafa;
+      --secondary: #4A7CFF;
+      --secondary-foreground: #fafafa;
+      --accent: #FFD700;
+      --accent-foreground: #171717;
+      --success: #4ADE80;
+      --warning: #FACC15;
+      --danger: #F87171;
+      --destructive: #F87171;
+      --destructive-foreground: #fafafa;
+    }
+    
+    body {
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      margin: 0;
+      padding: 0;
+      width: 320px;
+      background-color: var(--background);
+      color: var(--foreground);
+      background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d2d2d' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .font-pixel {
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .font-pixel-body {
+      font-family: 'VT323', monospace;
+      font-size: 1.25rem;
+    }
+    
+    .tabs {
+      display: flex;
+      background-color: var(--muted);
+      border-bottom: 3px solid var(--border);
+      margin-bottom: 12px;
+    }
+    
+    .tab-button {
+      flex: 1;
+      padding: 8px 5px;
+      background: none;
+      border: none;
+      font-size: 8px;
+      font-weight: 500;
+      color: var(--muted-foreground);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+      font-family: 'Press Start 2P', cursive;
+      letter-spacing: -0.5px;
+    }
+    
+    .tab-button.active {
+      color: var(--primary);
+    }
+    
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background-color: var(--primary);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .watchlist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .watchlist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 3px solid var(--border);
+      background-color: var(--muted);
+    }
+    
+    .watchlist-item-info {
+      flex: 1;
+    }
+    
+    .watchlist-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .watchlist-action-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted-foreground);
+      transition: color 0.2s;
+    }
+    
+    .watchlist-action-button:hover {
+      color: var(--destructive);
+    }
+    
+    .add-to-watchlist {
+      display: inline-block;
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      padding: 6px 10px;
+      border-radius: 0;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 8px;
+      cursor: pointer;
+      border: 3px solid black;
+      transition: all 0.2s;
+      font-family: 'Press Start 2P', cursive;
+      box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .add-to-watchlist:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .add-to-watchlist:active {
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    header {
+      padding: 12px 16px;
+      background-color: var(--background);
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--border);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 16px;
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .logo svg {
+      margin-right: 8px;
+    }
+    
+    .container {
+      padding: 16px;
+    }
+    
+    .search-box {
+      margin-bottom: 16px;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 3px solid black;
+      background-color: var(--background);
+      color: var(--foreground);
+      border-radius: 0;
+      font-size: 16px;
+      box-sizing: border-box;
+      font-family: 'VT323', monospace;
+    }
+    
+    .search-box .input-wrapper {
+      position: relative;
+      display: flex;
+      margin-bottom: 8px;
+    }
+    
+    .search-box button {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border: 3px solid black;
+      border-left: none;
+      border-radius: 0;
+      padding: 0 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 12px;
+      box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .search-box button:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .search-box button:active {
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .search-box input {
+      flex: 1;
+      border-right: none;
+      border-radius: 0;
+    }
+    
+    .current-token {
+      background-color: var(--muted);
+      border: 3px solid black;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: none;
+      box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .current-token-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .current-token-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--foreground);
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .token-badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 0;
+      color: white;
+      font-family: 'Press Start 2P', cursive;
+      border: 2px solid black;
+    }
+    
+    .token-badge-safe {
+      background-color: var(--success);
+    }
+    
+    .token-badge-warning {
+      background-color: var(--warning);
+    }
+    
+    .token-badge-danger {
+      background-color: var(--destructive);
+    }
+    
+    .token-badge-unknown {
+      background-color: var(--muted-foreground);
+    }
+    
+    .token-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .token-detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+    }
+    
+    .token-detail-label {
+      color: var(--muted-foreground);
+    }
+    
+    .token-detail-value {
+      font-weight: 500;
+      text-align: right;
+      word-break: break-all;
+      color: var(--foreground);
+    }
+    
+    .token-address {
+      font-family: monospace;
+      font-size: 14px;
+      background-color: var(--border);
+      padding: 2px 4px;
+      border-radius: 0;
+      border: 1px solid black;
+    }
+    
+    .token-action {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .token-action a {
+      flex: 1;
+      display: inline-block;
+      background-color: var(--secondary);
+      color: var(--secondary-foreground);
+      padding: 8px 12px;
+      border-radius: 0;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      transition: all 0.2s;
+      font-family: 'Press Start 2P', cursive;
+      border: 3px solid black;
+      box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .token-action a:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .token-action a:active {
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .history-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--foreground);
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .clear-button {
+      background: none;
+      border: none;
+      color: var(--muted-foreground);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+      font-family: 'VT323', monospace;
+    }
+    
+    .clear-button:hover {
+      color: var(--destructive);
+    }
+    
+    .history-list {
+      background-color: var(--muted);
+      border: 3px solid black;
+      overflow: hidden;
+      box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .history-item {
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    
+    .history-item:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .history-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    
+    .history-item-title {
+      font-weight: 500;
+      font-size: 16px;
+      color: var(--foreground);
+    }
+    
+    .history-item-time {
+      font-size: 14px;
+      color: var(--muted-foreground);
+    }
+    
+    .history-item-address {
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--muted-foreground);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted-foreground);
+      font-size: 16px;
+      font-family: 'VT323', monospace;
+    }
+    
+    .error-message {
+      background-color: rgba(248, 113, 113, 0.2);
+      color: var(--destructive);
+      padding: 8px 12px;
+      border: 2px solid var(--destructive);
+      border-radius: 0;
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: none;
+      font-family: 'VT323', monospace;
+    }
+    
+    .loading {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+    
+    .loading-spinner {
+      border: 2px solid var(--border);
+      border-top: 2px solid var(--primary);
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Login Section */
+    .login-section {
+      padding: 20px;
+      text-align: center;
+      font-family: 'VT323', monospace;
+    }
+    
+    .login-button {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border: 3px solid black;
+      border-radius: 0;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s;
+      font-family: 'Press Start 2P', cursive;
+      box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .login-button:active {
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background-color: var(--muted);
+      font-size: 14px;
+      font-family: 'VT323', monospace;
+    }
+    
+    .subscription-badge {
+      background-color: var(--success);
+      color: white;
+      padding: 3px 6px;
+      border-radius: 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      border: 1px solid black;
+      font-family: 'Press Start 2P', cursive;
+    }
+    
+    .subscription-badge.premium {
+      background-color: var(--accent);
+      color: black;
+    }
+    
+    .logout-button {
+      background: none;
+      border: none;
+      color: var(--muted-foreground);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      font-family: 'VT323', monospace;
+    }
+    
+    .logout-button:hover {
+      color: var(--destructive);
+    }
+    
+    /* Pixel art styling */
+    .pixel-border {
+      border: 3px solid black;
+      image-rendering: pixelated;
+    }
+    
+    .pixel-button {
+      border: 3px solid black;
+      background-color: var(--primary);
+      color: white;
+      padding: 8px 16px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+      image-rendering: pixelated;
+      box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s;
+    }
+    
+    .pixel-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .pixel-button:active {
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Risk Factors Styling */
+    .risk-factors-header {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: var(--foreground);
+    }
+    
+    .risk-factors-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .risk-factor {
+      background-color: var(--muted);
+      border: 2px solid var(--border);
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .risk-factor:last-child {
+      margin-bottom: 0;
+    }
+    
+    .risk-factor-name {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: var(--foreground);
+    }
+    
+    .risk-factor-description {
+      display: block;
+      color: var(--muted-foreground);
+      font-size: 13px;
+    }
+    
+    .risk-factor-value {
+      float: right;
+      background-color: var(--border);
+      padding: 2px 6px;
+      border-radius: 0;
+      font-size: 12px;
+      border: 1px solid black;
+    }
+    
+    .severity-icon {
+      display: inline-block;
+      margin-right: 6px;
+    }
+    
+    .severity-high {
+      color: var(--destructive);
+    }
+    
+    .severity-medium {
+      color: var(--warning);
+    }
+    
+    .severity-low {
+      color: var(--success);
+    }
+    
+    .risk-high {
+      border-left: 4px solid var(--destructive);
+    }
+    
+    .risk-medium {
+      border-left: 4px solid var(--warning);
+    }
+    
+    .risk-low {
+      border-left: 4px solid var(--success);
+    }
+    
+    /* Token Image */
+    .token-image {
+      max-width: 80px;
+      max-height: 80px;
+      border-radius: 50%;
+      border: 3px solid black;
+      box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+      background-color: var(--muted);
+    }
+
+    /* Animation */
+    @keyframes scanning {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+    
+    .scan-line {
+      background: linear-gradient(to bottom, 
+        rgba(74, 124, 255, 0) 0%,
+        rgba(74, 124, 255, 0.8) 40%,
+        rgba(74, 124, 255, 0.8) 60%,
+        rgba(74, 124, 255, 0) 100%);
+      animation: scanning 2s linear infinite;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg width="24" height="24" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="8" width="48" height="48" fill="#FF6B4A" stroke="#000" strokeWidth="3" />
+        <rect x="16" y="16" width="32" height="32" fill="#4A7CFF" stroke="#000" strokeWidth="3" />
+        <rect x="24" y="24" width="16" height="16" fill="#FFD700" stroke="#000" strokeWidth="3" />
+      </svg>
+      <span>RUG<span style="color: var(--secondary);">GUARD</span></span>
+    </div>
+    <div id="connection-status"></div>
+  </header>
+  
+  <!-- User info section removed - no login required -->
+  
+  <div class="container" id="main-container">
+    <div class="tabs">
+      <button class="tab-button active" data-tab="checker">Token Checker</button>
+      <button class="tab-button" data-tab="watchlist">Watchlist</button>
+      <button class="tab-button" data-tab="stats">Stats</button>
+      <button class="tab-button" data-tab="settings">Settings</button>
+    </div>
+    
+    <!-- Token Checker Tab -->
+    <div class="tab-content active" id="checker-tab">
+      <div class="search-box">
+        <div class="input-wrapper">
+          <input type="text" id="token-input" placeholder="Enter Solana token address or paste URL">
+          <button id="check-button">Check</button>
+        </div>
+        <div class="error-message" id="error-message"></div>
+      </div>
+      
+      <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <span>Checking token...</span>
+      </div>
+      
+      <div class="current-token" id="current-token">
+        <div class="current-token-header">
+          <div class="current-token-title" id="token-name">Token Name</div>
+          <div class="token-badge" id="risk-badge">Unknown</div>
+        </div>
+        
+        <div id="token-image-container" style="display: none; text-align: center; margin-bottom: 12px;"></div>
+
+        <div class="token-details">
+          <div class="token-detail-row">
+            <div class="token-detail-label">Address:</div>
+            <div class="token-detail-value">
+              <span class="token-address" id="token-address">...</span>
+            </div>
+          </div>
+          
+          <div class="token-detail-row" id="token-symbol-row">
+            <div class="token-detail-label">Symbol:</div>
+            <div class="token-detail-value" id="token-symbol">UNKNOWN</div>
+          </div>
+          
+          <div class="token-detail-row" id="token-supply-row" style="display: none;">
+            <div class="token-detail-label">Supply:</div>
+            <div class="token-detail-value" id="token-supply">0</div>
+          </div>
+          
+          <div class="token-detail-row" id="token-liquidity-row" style="display: none;">
+            <div class="token-detail-label">Liquidity:</div>
+            <div class="token-detail-value" id="token-liquidity">$0.00</div>
+          </div>
+          
+          <div class="token-detail-row" id="risk-score-row">
+            <div class="token-detail-label">Risk Score:</div>
+            <div class="token-detail-value" id="risk-score">0</div>
+          </div>
+          
+          <div class="token-detail-row" id="grade-row">
+            <div class="token-detail-label">Grade:</div>
+            <div class="token-detail-value" id="grade">?</div>
+          </div>
+        </div>
+        
+        <div id="risk-factors-container" style="display: none; margin-top: 16px;"></div>
+        
+        <div class="token-action">
+          <a href="#" id="view-on-rugcheck" target="_blank">View on RugCheck</a>
+          <button id="add-to-watchlist" class="add-to-watchlist">Add to Watchlist</button>
+        </div>
+      </div>
+      
+      <div class="history-section">
+        <div class="history-header">
+          <div class="history-title">Recently Checked Tokens</div>
+          <button class="clear-button" id="clear-history">Clear History</button>
+        </div>
+        
+        <div class="history-list" id="history-list">
+          <div class="empty-state" id="empty-state">
+            No tokens checked yet
+          </div>
+          <!-- History items will be added here dynamically -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Watchlist Tab -->
+    <div class="tab-content" id="watchlist-tab">
+      
+      <!-- Premium Upgrade Section -->
+      <div id="premium-upgrade-section" style="margin-bottom: 16px; display: none;">
+        <div class="watchlist-header">
+          <div class="history-title">Upgrade to Premium</div>
+        </div>
+        <div style="background-color: var(--muted); border: 3px solid black; padding: 12px; margin-bottom: 16px; box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);">
+          <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <div style="background-color: var(--accent); width: 18px; height: 18px; margin-right: 8px; display: flex; align-items: center; justify-content: center; border: 2px solid black;">
+              ✓
+            </div>
+            <span>Premium risk detection</span>
+          </div>
+          <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <div style="background-color: var(--accent); width: 18px; height: 18px; margin-right: 8px; display: flex; align-items: center; justify-content: center; border: 2px solid black;">
+              ✓
+            </div>
+            <span>Real-time alerts</span>
+          </div>
+          <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <div style="background-color: var(--accent); width: 18px; height: 18px; margin-right: 8px; display: flex; align-items: center; justify-content: center; border: 2px solid black;">
+              ✓
+            </div>
+            <span>Cloud watchlist sync</span>
+          </div>
+          <div style="font-family: 'Press Start 2P', cursive; font-size: 14px; text-align: center; margin: 16px 0; color: var(--accent);">
+            $4.20
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button id="pay-with-solana" class="login-button" style="flex: 1; font-size: 10px; padding: 8px 4px; background-color: var(--secondary); display: flex; align-items: center; justify-content: center;">
+              <span style="margin-right: 6px;">
+                <svg width="16" height="16" viewBox="0 0 397 311" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M64.5 237.7L126.5 300.4C128.4 302.3 131 303.3 133.7 303.3H380.9C386.1 303.3 388.7 297.1 385 293.4L323 230.7C321.1 228.8 318.5 227.8 315.8 227.8H68.6C63.4 227.7 60.8 233.9 64.5 237.7Z" fill="white"/>
+                  <path d="M64.5 79.9L126.5 17.3C128.4 15.3 131 14.3 133.7 14.3H380.9C386.1 14.3 388.7 20.5 385 24.3L323 86.9C321.1 88.8 318.5 89.8 315.8 89.8H68.6C63.4 89.8 60.8 83.6 64.5 79.9Z" fill="white"/>
+                  <path d="M323 158.8L261 96.2C259.1 94.2 256.5 93.2 253.8 93.2H6.6C1.4 93.2 -1.2 99.4 2.5 103.1L64.5 165.8C66.4 167.7 69 168.7 71.7 168.7H318.9C324.1 168.7 326.7 162.5 323 158.8Z" fill="white"/>
+                </svg>
+              </span>
+              Solana Pay
+            </button>
+            <button id="pay-with-stripe" class="login-button" style="flex: 1; font-size: 10px; padding: 8px 4px; background-color: #635BFF; display: flex; align-items: center; justify-content: center;">
+              <span style="margin-right: 6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13.479 9.247C13.479 8.748 13.898 8.512 14.619 8.512C15.596 8.512 16.868 8.866 17.845 9.484V6.321C16.787 5.822 15.738 5.586 14.619 5.586C11.993 5.586 10.137 7.083 10.137 9.402C10.137 13.095 15.155 12.286 15.155 14.129C15.155 14.783 14.628 15.019 13.81 15.019C12.739 15.019 11.322 14.538 10.229 13.861V17.064C11.435 17.672 12.65 17.908 13.81 17.908C16.497 17.908 18.497 16.451 18.497 14.093C18.497 10.104 13.479 11.052 13.479 9.247Z" fill="white"/>
+                </svg>
+              </span>
+              Stripe
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Add Token Form -->
+      <div class="search-box">
+        <div class="input-wrapper">
+          <input type="text" id="watchlist-token-input" placeholder="Enter Solana token address to watch">
+          <button id="add-to-watchlist-manual">Add</button>
+        </div>
+        <div class="error-message" id="watchlist-error-message"></div>
+      </div>
+      
+      <div class="watchlist-header">
+        <div class="history-title">Monitored Tokens</div>
+        <button class="clear-button" id="clear-watchlist">Clear All</button>
+      </div>
+      
+      <div class="history-list" id="watchlist-container">
+        <div class="empty-state" id="empty-watchlist">
+          No tokens in your watchlist yet
+        </div>
+        <!-- Watchlist items will be added here dynamically -->
+      </div>
+      
+      <div class="token-detail-row" style="margin-top: 16px;">
+        <div class="token-detail-label">Monitoring Status:</div>
+        <div class="token-detail-value" id="monitor-status">Active (checking every 30 seconds)</div>
+      </div>
+      
+      <div class="loading" id="watchlist-loading">
+        <div class="loading-spinner"></div>
+        <span>Checking token...</span>
+      </div>
+    </div>
+    
+    <!-- Stats Tab -->
+    <div class="tab-content" id="stats-tab">
+      <div class="history-header">
+        <div class="history-title">Usage Statistics</div>
+      </div>
+      
+      <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+        <div class="stat-card" style="background-color: var(--muted); border: 3px solid black; padding: 12px; text-align: center; box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);">
+          <div class="stat-value" style="font-family: 'Press Start 2P', cursive; font-size: 20px; color: var(--accent); margin-bottom: 4px;" id="tokens-watching">0</div>
+          <div class="stat-label" style="font-family: 'VT323', monospace; font-size: 14px; color: var(--muted-foreground);">TOKENS WATCHING</div>
+        </div>
+        
+        <div class="stat-card" style="background-color: var(--muted); border: 3px solid black; padding: 12px; text-align: center; box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);">
+          <div class="stat-value" style="font-family: 'Press Start 2P', cursive; font-size: 20px; color: var(--danger); margin-bottom: 4px;" id="alerts-today">0</div>
+          <div class="stat-label" style="font-family: 'VT323', monospace; font-size: 14px; color: var(--muted-foreground);">ALERTS TODAY</div>
+        </div>
+        
+        <div class="stat-card" style="background-color: var(--muted); border: 3px solid black; padding: 12px; text-align: center; box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);">
+          <div class="stat-value" style="font-family: 'Press Start 2P', cursive; font-size: 20px; color: var(--success); margin-bottom: 4px;" id="scans-performed">0</div>
+          <div class="stat-label" style="font-family: 'VT323', monospace; font-size: 14px; color: var(--muted-foreground);">SCANS PERFORMED</div>
+        </div>
+        
+        <div class="stat-card" style="background-color: var(--muted); border: 3px solid black; padding: 12px; text-align: center; box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);">
+          <div class="stat-value" style="font-family: 'Press Start 2P', cursive; font-size: 20px; color: var(--danger); margin-bottom: 4px;" id="high-risk-detected">0</div>
+          <div class="stat-label" style="font-family: 'VT323', monospace; font-size: 14px; color: var(--muted-foreground);">HIGH RISK DETECTED</div>
+        </div>
+      </div>
+      
+      <div style="background-color: var(--muted); border: 3px solid black; padding: 12px; box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);">
+        <div style="text-align: center; color: var(--muted-foreground); font-family: 'VT323', monospace; font-size: 14px;">
+          Statistics refreshed in real-time
+        </div>
+      </div>
+    </div>
+    
+    <!-- Settings Tab -->
+    <div class="tab-content" id="settings-tab">
+      <div class="history-header">
+        <div class="history-title">Extension Settings</div>
+      </div>
+      
+      <div style="background-color: #131313; border: 2px solid #333; padding: 16px;">
+        <div class="token-detail-row" style="margin-bottom: 16px;">
+          <div class="token-detail-label">Notification Sounds:</div>
+          <div class="token-detail-value">
+            <input type="checkbox" id="notification-sounds" checked>
+          </div>
+        </div>
+        
+        <div class="token-detail-row" style="margin-bottom: 16px;">
+          <div class="token-detail-label">Show Floating Badge:</div>
+          <div class="token-detail-value">
+            <input type="checkbox" id="show-badge" checked>
+          </div>
+        </div>
+        
+        <div class="token-detail-row" style="margin-bottom: 16px;">
+          <div class="token-detail-label">Auto-Scan URLs:</div>
+          <div class="token-detail-value">
+            <input type="checkbox" id="auto-scan" checked>
+          </div>
+        </div>
+        
+        <div class="token-detail-row">
+          <div class="token-detail-label">Extension Version:</div>
+          <div class="token-detail-value">1.0.0</div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <a href="https://rugguard.xyz" target="_blank" style="display: block; text-align: center; color: #a970ff; text-decoration: none; margin-bottom: 10px;">Visit Website</a>
+        <a href="https://rugguard.xyz/privacy" target="_blank" style="display: block; text-align: center; color: #888; text-decoration: none; font-size: 12px;">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
