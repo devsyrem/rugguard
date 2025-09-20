@@ -2,7 +2,7 @@
 // This script injects risk analysis information into Solana explorer pages and displays a persistent badge
 
 // Configuration
-const API_URL = ";
+const API_URL = ;
 
 // Add floating badge stylesheet
 const badgeStylesheet = document.createElement('link');
