@@ -4,7 +4,7 @@
  */
 
 // Store API key - get from environment or use the provided key
-const API_KEY = 'f1de9137-eb1d-4341-9da7-b6920b4839c4';
+const API_KEY = '';
 
 // Track recently checked tokens to prevent duplicates
 let recentlyCheckedTokens = new Map(); // token address -> timestamp
