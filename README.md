@@ -44,12 +44,7 @@ Every safety check relies on on-chain state (e.g., liquidity ownership, token su
 3. Open Chrome and go to: chrome://extensions/
 4. Enable **Developer mode** (toggle in the top-right).  
 5. Click **Load unpacked** and select the unzipped RugGuard folder.  
-6. RugGuard will now appear in your list of extensions.  
-
----
-
-## 🧪 Demo  
-[Insert demo link or GIF here]  
+6. RugGuard will now appear in your list of extensions.    
 
 ---
 
@@ -59,14 +54,6 @@ Every safety check relies on on-chain state (e.g., liquidity ownership, token su
 - **Backend**: Solana RPC queries & on-chain data parsing  
 - **Integration**: dev.fun platform  
 
----
-
-## 🏆 App Jam Submission  
-- **Competition**: dev.fun On-Chain App Jam  
-- **Requirement Check**:  
-- Built on Solana ✅  
-- Includes on-chain element ✅  
-- Live on dev.fun ✅  
 
 ---
 
